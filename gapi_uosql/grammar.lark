@@ -1,0 +1,62 @@
+// UOSQL Grammar: Universal Orchestration & Schema Query Language
+// Supports GAPI Universal Knowledge Graph:
+// Human <-> Organization <-> Project <-> Workflow <-> Repository <-> AIModel <-> DigitalTwin
+
+start: statement (";" statement)* [";"]
+
+statement: connect_stmt
+         | traverse_stmt
+         | find_stmt
+         | entity_stmt
+
+// CONNECT Human("Levi") -> Organization("GAPI-Core") [role="Lead", status="Active"] -> ...
+connect_stmt: "CONNECT" entity_ref [edge_attrs] (chain_link)*
+chain_link: edge_op [edge_attrs] entity_ref [edge_attrs]
+
+edge_op: "->"  -> dir_forward
+       | "<-"  -> dir_backward
+       | "<->" -> dir_bi
+       | "--"  -> dir_undirected
+
+edge_attrs: "[" attr_pair ("," attr_pair)* "]"
+
+// TRAVERSE Human("Levi") -> Organization -> Project [status="Active"] -> AIModel
+traverse_stmt: "TRAVERSE" entity_ref (traverse_link)+ ["WHERE" condition_expr] ["RETURN" return_list]
+traverse_link: edge_op entity_selector [edge_attrs]
+
+// FIND AIModel WHERE type="LLM" AND vendor="Google"
+find_stmt: "FIND" (KIND | "*") ["WHERE" condition_expr]
+
+// Human("Levi", [role="Admin", email="levi@gapi.org"])
+entity_stmt: entity_decl
+
+entity_decl: KIND "(" STRING ["," entity_attrs] ")"
+entity_ref: KIND "(" STRING ")"
+entity_selector: KIND ["(" (STRING | "*") ")"]
+
+entity_attrs: "{" attr_pair ("," attr_pair)* "}"
+            | "[" attr_pair ("," attr_pair)* "]"
+
+attr_pair: CNAME "=" value
+
+condition_expr: condition_term ("OR" condition_term)*
+condition_term: condition_factor ("AND" condition_factor)*
+COMP_OP: "==" | "!=" | ">=" | "<=" | "=" | ">" | "<" | "CONTAINS"
+condition_factor: CNAME COMP_OP value
+                | "(" condition_expr ")"
+
+return_list: return_item ("," return_item)*
+return_item: CNAME | "*" | KIND
+
+value: STRING   -> str_val
+     | SIGNED_NUMBER -> num_val
+     | BOOLEAN  -> bool_val
+
+KIND: "Human" | "Organization" | "Project" | "Workflow" | "Repository" | "AIModel" | "DigitalTwin" | CNAME
+BOOLEAN: "true" | "false" | "True" | "False"
+
+%import common.CNAME
+%import common.ESCAPED_STRING -> STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS

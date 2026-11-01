@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.class
+
+# Caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Binaries / compiled artifacts
+java_engine/bin/
+*.jar
+
+# Environments
+env/
+venv/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
