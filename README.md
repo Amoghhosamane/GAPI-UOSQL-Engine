@@ -1,203 +1,388 @@
-# GAPI & UOSQL: Universal Knowledge Graph & AI Orchestration Engine
+# GAPI & UOSQL
+### Universal Knowledge Graph & AI Orchestration Engine
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Java 21+](https://img.shields.io/badge/Java-21%2B-orange.svg)](https://www.oracle.com/java/)
 [![ANTLR 4.13.2](https://img.shields.io/badge/ANTLR-4.13.2-red.svg)](https://www.antlr.org/)
 [![Status](https://img.shields.io/badge/Status-Active%20Prototype-brightgreen.svg)]()
 
-> **"Universal Knowledge Graph Layer: Behind UOSQL resides a graph-like model where every connection becomes searchable."**  
-> — Inspired by [Levi Reyes](https://www.linkedin.com/in/levi-reyes-1530b6297/) & built on parsing techniques from [Amoghhosamane/ANTLRparse](https://github.com/Amoghhosamane/ANTLRparse).
+> **A universal knowledge graph where every connection becomes searchable.**
+>
+> Inspired by [Levi Reyes](https://www.linkedin.com/in/levi-reyes-1530b6297/) and built on parsing techniques from [Amoghhosamane/ANTLRparse](https://github.com/Amoghhosamane/ANTLRparse).
 
 ---
 
-## 📖 What Does This Project Do?
+## Overview
 
-Modern software engineering and AI systems are fragmented into isolated silos:
-- Code resides in Git repositories.
-- Workflows live in CI/CD runners and task queues.
-- Model weights and inference configurations exist across model hubs.
-- Telemetry lives in Digital Twin / IoT monitors.
-- Human ownership is scattered across Jira, Slack, and organizational registries.
+Modern software ecosystems are distributed across disconnected systems:
 
-When an **autonomous AI Agent** or **engineer** asks:
-> *"Which workflow automates the digital twin linked to the repository maintained by Levi's team?"*
+- Source code lives in Git repositories.
+- Automation and business logic run through workflows and CI/CD pipelines.
+- AI models and inference configurations exist across model hubs.
+- Digital Twin and IoT systems generate telemetry.
+- Team ownership and organizational information are scattered across project management and communication platforms.
 
-...standard databases struggle to join across these heterogeneous domains without fragile, ad-hoc glue code.
+Connecting these systems often requires custom integrations, complex queries, and fragile application-level logic.
 
-### The Solution: GAPI + UOSQL
-**GAPI** (Universal Orchestration Database) provides a **Universal Knowledge Graph Layer** queried through **UOSQL** (*Universal Orchestration and Schema Query Language*).
+Consider the following question:
 
-It establishes a strongly-typed 7-tier continuous ontology:
+> Which workflow automates the Digital Twin associated with the repository maintained by Levi's team?
 
-$$\mathbf{Human} \longleftrightarrow \mathbf{Organization} \longleftrightarrow \mathbf{Project} \longleftrightarrow \mathbf{Workflow} \longleftrightarrow \mathbf{Repository} \longleftrightarrow \mathbf{AI\ Model} \longleftrightarrow \mathbf{Digital\ Twin}$$
+Traditional relational queries can become difficult to maintain when relationships span multiple heterogeneous domains.
 
-Every relationship is:
-1. **Searchable & Traversible**: Hop through 1 to 7 layers with simple declarative syntax.
-2. **AI-Agent Ready**: Provides structured function-calling tools (Gemini, Claude, GPT, MCP) so LLMs navigate company infrastructure deterministically rather than hallucinating paths.
-3. **Dual Implemented**: Available in **Python (Lark)** for AI tools and **Java (ANTLR4)** for high-throughput enterprise backends.
+**GAPI and UOSQL aim to solve this problem through a unified, graph-oriented data model and a declarative query language.**
+
+## What is GAPI?
+
+**GAPI (Universal Orchestration Database)** is a knowledge graph and orchestration layer designed to represent relationships between people, organizations, projects, workflows, repositories, AI models, and Digital Twins.
+
+It provides a unified structure in which entities and their relationships can be connected, discovered, traversed, and queried.
+
+## What is UOSQL?
+
+**UOSQL (Universal Orchestration and Schema Query Language)** is a declarative query language designed to interact with the GAPI graph.
+
+It supports three primary operations:
+
+- `CONNECT` — Create entities and establish relationships.
+- `TRAVERSE` — Navigate multi-hop relationships across the graph.
+- `FIND` — Discover entities using types and property-based filters.
+
+The project currently provides two implementations:
+
+| Implementation | Technology | Intended use |
+|---|---|---|
+| Python Engine | Python, Lark, NetworkX | AI tooling, experimentation, and agent integrations |
+| Java Engine | Java 21, ANTLR 4 | JVM-based applications and backend integration |
 
 ---
 
-## 🏛️ Architecture Overview
+## Architecture
 
+GAPI uses a seven-tier ontology to organize connected infrastructure:
+
+```text
+Human
+  │
+  ▼
+Organization
+  │
+  ▼
+Project
+  │
+  ▼
+Workflow
+  │
+  ▼
+Repository
+  │
+  ▼
+AI Model
+  │
+  ▼
+Digital Twin
 ```
-                               ┌────────────────────────────────────────────────┐
-                               │   AI Agents (Gemini, Claude, GPT) / Developers │
-                               └───────────────────────┬────────────────────────┘
-                                                       │  UOSQL Query / Tool Call
-                                                       ▼
-                         ┌─────────────────────────────────────────────────────────────┐
-                         │                    UOSQL Query Parsers                      │
-                         │   • Python Engine (Lark grammar.lark)                       │
-                         │   • Java Engine   (ANTLR4 UOSQL.g4)                         │
-                         └─────────────────────────────┬───────────────────────────────┘
-                                                       │ AST / Execution Plan
-                                                       ▼
-                         ┌─────────────────────────────────────────────────────────────┐
-                         │               GAPIGraphStore Engine                         │
-                         │   • In-Memory / NetworkX / SQLite Adjacency                 │
-                         │   • Multi-Hop Graph Traversal Index                         │
-                         │   • Property Filters (WHERE condition)                      │
-                         └─────────────────────────────┬───────────────────────────────┘
-                                                       │
-                 ┌───────────────────┬─────────────────┼───────────────────┬──────────────────┐
-                 ▼                   ▼                 ▼                   ▼                  ▼
-          ┌─────────────┐     ┌─────────────┐   ┌─────────────┐     ┌─────────────┐    ┌─────────────┐
-          │    Human    │ ──▶ │Organization │──▶│   Project   │ ──▶ │  Workflow   │──▶ │ Repository  │ ...
-          └─────────────┘     └─────────────┘   └─────────────┘     └─────────────┘    └─────────────┘
+
+Each entity is represented as a typed node, while relationships form traversable graph edges.
+
+### High-level architecture
+
+```text
+        AI Agents / Developers
+       Gemini | Claude | GPT
+                 │
+                 │ UOSQL Query / Tool Call
+                 ▼
+       ┌───────────────────────┐
+       │    UOSQL Parsers     │
+       │                       │
+       │ Python: Lark          │
+       │ Java: ANTLR4          │
+       └───────────┬───────────┘
+                   │
+                   ▼
+       ┌───────────────────────┐
+       │   AST / Execution     │
+       │       Runtime         │
+       └───────────┬───────────┘
+                   │
+                   ▼
+       ┌───────────────────────┐
+       │   GAPI Graph Store    │
+       │                       │
+       │ Entity Management     │
+       │ Relationship Index    │
+       │ Graph Traversal       │
+       │ Property Filtering    │
+       └───────────┬───────────┘
+                   │
+                   ▼
+          Universal Knowledge Graph
+                   │
+       ┌───────────┼───────────┐
+       ▼           ▼           ▼
+     Human       Project     Workflow
+       │           │           │
+       ▼           ▼           ▼
+     Org        Repository   AI Model
+                               │
+                               ▼
+                          Digital Twin
 ```
+
+### Core capabilities
+
+1. **Multi-hop traversal:** Navigate connected entities across multiple ontology layers.
+2. **Typed relationships:** Maintain structured relationships between different entity categories.
+3. **Property-based discovery:** Filter entities using metadata and comparison operators.
+4. **AI-agent integration:** Expose graph operations through structured tool-calling interfaces.
+5. **Dual-language implementation:** Use Python for AI-oriented tooling and Java for JVM-based integration.
 
 ---
 
-## 🔤 UOSQL Language Primer
+## UOSQL Language Primer
 
-UOSQL provides an expressive syntax designed for graph wiring, path discovery, and entity retrieval.
+### 1. CONNECT — Create graph relationships
 
-### 1. Connecting Graph Entities (`CONNECT`)
-Wire full multi-tier relationships with inline attributes:
+The `CONNECT` operation establishes a chain of connected entities with optional metadata.
+
 ```sql
 CONNECT Human("Levi Reyes") [role="Lead Architect", status="Active"]
-     -> Organization("GAPI Enterprise") [tier="Global"]
-     -> Project("UOSQL-Orchestrator") [domain="Multi-Agent Systems"]
-     -> Workflow("Continuous-KG-Sync") [frequency="realtime"]
-     -> Repository("Amoghhosamane/ANTLRparse") [language="ANTLR/Java"]
-     -> AIModel("Gemini-Flash") [latency_ms=100, modality="multimodal"]
-     -> DigitalTwin("EdgeRoboticsTwin") [status="synced", telemetry_fps=60];
+    -> Organization("GAPI Enterprise") [tier="Global"]
+    -> Project("UOSQL-Orchestrator") [domain="Multi-Agent Systems"]
+    -> Workflow("Continuous-KG-Sync") [frequency="realtime"]
+    -> Repository("Amoghhosamane/ANTLRparse") [language="ANTLR/Java"]
+    -> AIModel("Gemini-Flash") [latency_ms=100, modality="multimodal"]
+    -> DigitalTwin("EdgeRoboticsTwin") [status="synced", telemetry_fps=60];
 ```
 
-### 2. Multi-Hop Graph Traversal (`TRAVERSE`)
-Traverse across hops deterministically:
+This creates a connected entity chain containing six relationships across seven entity types.
+
+### 2. TRAVERSE — Navigate connected entities
+
+The `TRAVERSE` operation discovers paths through the graph.
+
 ```sql
 TRAVERSE Human("Levi Reyes")
-      -> Organization
-      -> Project
-      -> Workflow
-      -> Repository
-      -> AIModel;
+    -> Organization
+    -> Project
+    -> Workflow
+    -> Repository
+    -> AIModel;
 ```
-*Result:* Returns the exact ordered path from Human all the way to the AI Model.
 
-### 3. Entity Discovery & Filtering (`FIND`)
-Search for any entity by kind and metadata:
+**Expected result:** An ordered path containing the matching entities from the starting Human node to the AIModel node.
+
+### 3. FIND — Discover entities using filters
+
+The `FIND` operation retrieves entities based on their type and metadata.
+
 ```sql
-FIND AIModel WHERE modality="multimodal" AND latency_ms <= 150;
+FIND AIModel
+WHERE modality = "multimodal"
+AND latency_ms <= 150;
 ```
+
+This query searches for AI models that support multimodal input and have a recorded latency of 150 ms or less.
 
 ---
 
-## 🤖 AI Agent & LLM Function Calling
+## AI Agent Integration
 
-The engine provides a ready-to-use tool interface (`GAPIAITools`) compatible with Gemini, Anthropic Claude, and OpenAI tool-calling specifications:
+GAPI includes an AI tool interface called `GAPIAITools`, designed to expose graph operations to LLM-based agents.
 
-- **`gapi_query`**: Allows the agent to run UOSQL traversal queries to answer questions about organizational tech stacks.
-- **`gapi_connect`**: Allows agents to register new artifacts (e.g. newly deployed workflows or fine-tuned models) into the universal graph.
-- **`gapi_export_graph`**: Exports the graph for global context reasoning and visualization.
+The interface is intended to support structured function-calling workflows with models and frameworks such as:
+
+- OpenAI GPT
+- Anthropic Claude
+- Google Gemini
+- Model Context Protocol (MCP)-compatible clients
+
+### Available operations
+
+| Tool | Description |
+|---|---|
+| `gapi_query` | Execute UOSQL queries to retrieve and traverse graph data. |
+| `gapi_connect` | Register new entities and relationships in the graph. |
+| `gapi_export_graph` | Export graph data for visualization and external processing. |
+
+### Example workflow
+
+```text
+User Question
+     │
+     ▼
+AI Agent
+     │
+     ▼
+GAPI Tool Call
+     │
+     ▼
+UOSQL Query
+     │
+     ▼
+Graph Traversal
+     │
+     ▼
+Structured Result
+     │
+     ▼
+AI Agent Response
+```
+
+Instead of asking an LLM to infer infrastructure relationships from unstructured context, the agent can retrieve structured graph results through explicit queries.
 
 ---
 
-## 📂 Repository Layout
+## Repository Structure
 
-```
+```text
 gapi/
-├── antlr-4.13.2-complete.jar        # Official ANTLR 4.13.2 runtime jar
 │
-├── java_engine/                     # Java Implementation (Enterprise ANTLR4)
-│   ├── src/gapi/uosql/
-│   │   ├── UOSQL.g4                 # ANTLR4 Context-Free Grammar
-│   │   ├── EntityNode.java          # Entity representation
-│   │   ├── GAPIGraphStore.java      # Adjacency multi-hop graph store
-│   │   ├── UOSQLExecutionVisitor.java # Visitor converting AST into graph operations
-│   │   └── Main.java                # Java runnable entrypoint
-│   └── bin/                         # Compiled .class files
+├── antlr-4.13.2-complete.jar
 │
-├── gapi_uosql/                      # Python Implementation (Fast AI / Tooling)
-│   ├── grammar.lark                 # EBNF Grammar specification for Lark
-│   ├── models.py                    # Pydantic entity and edge models
-│   ├── store.py                     # NetworkX graph store & pathfinder
-│   ├── engine.py                    # AST transformer & execution runtime
-│   └── ai_tools.py                  # AI Agent function-calling & MCP schemas
+├── java_engine/
+│   ├── src/
+│   │   └── gapi/
+│   │       └── uosql/
+│   │           ├── UOSQL.g4
+│   │           ├── EntityNode.java
+│   │           ├── GAPIGraphStore.java
+│   │           ├── UOSQLExecutionVisitor.java
+│   │           └── Main.java
+│   │
+│   └── bin/
+│
+├── gapi_uosql/
+│   ├── grammar.lark
+│   ├── models.py
+│   ├── store.py
+│   ├── engine.py
+│   └── ai_tools.py
 │
 ├── tests/
-│   └── test_uosql.py                # Pytest test suite (100% pass)
+│   └── test_uosql.py
 │
 ├── examples/
-│   └── demo.py                      # Python end-to-end traversal & AI dispatch demo
+│   └── demo.py
 │
-└── requirements.txt                 # Python dependencies
+└── requirements.txt
 ```
+
+### Component responsibilities
+
+| Component | Responsibility |
+|---|---|
+| `UOSQL.g4` | ANTLR grammar definition for the Java implementation |
+| `EntityNode.java` | Java entity representation |
+| `GAPIGraphStore.java` | Java graph storage and traversal |
+| `UOSQLExecutionVisitor.java` | Converts parsed queries into graph operations |
+| `grammar.lark` | Python UOSQL grammar |
+| `models.py` | Pydantic entity and relationship models |
+| `store.py` | NetworkX graph storage and pathfinding |
+| `engine.py` | Query parsing, AST transformation, and execution |
+| `ai_tools.py` | AI-agent tool definitions and dispatch |
+| `test_uosql.py` | Automated Python tests |
+| `demo.py` | End-to-end demonstration |
 
 ---
 
-## 🚀 Quick Start Guide
+## Getting Started
 
 ### Prerequisites
-- **Python 3.10+**
-- **Java JDK 21+** (e.g. OpenJDK or Oracle JDK 23)
 
-### 1. Java Engine (ANTLR4)
+Install the following:
 
-```powershell
-# Generate ANTLR visitor and compile Java sources:
-java -jar antlr-4.13.2-complete.jar -visitor -package gapi.uosql java_engine\src\gapi\uosql\UOSQL.g4
-javac -cp ".;antlr-4.13.2-complete.jar" -d java_engine\bin java_engine\src\gapi\uosql\*.java
+- Python 3.10 or newer
+- Java JDK 21 or newer
+- Git
+- pip
 
-# Run Java Demo:
-java -cp "java_engine\bin;antlr-4.13.2-complete.jar" gapi.uosql.Main
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Amoghhosamane/gapi.git
+cd gapi
 ```
 
-### 2. Python Engine (Lark + AI Tools)
+Replace the repository URL if the project is hosted elsewhere.
+
+### 2. Run the Python implementation
+
+Install dependencies:
+
+```bash
+py -m pip install -r requirements.txt
+```
+
+Run the test suite:
+
+```bash
+py -m pytest tests
+```
+
+Run the interactive demonstration:
 
 ```powershell
-# Install dependencies:
-py -m pip install -r requirements.txt
-
-# Run Unit Tests:
-py -m pytest tests
-
-# Run Interactive Demo:
 $env:PYTHONPATH="."
 py examples\demo.py
 ```
 
+### 3. Run the Java implementation
+
+Generate the ANTLR visitor and parser:
+
+```powershell
+java -jar antlr-4.13.2-complete.jar -visitor -package gapi.uosql java_engine\src\gapi\uosql\UOSQL.g4
+```
+
+Compile the Java sources:
+
+```powershell
+javac -cp ".;antlr-4.13.2-complete.jar" -d java_engine\bin java_engine\src\gapi\uosql\*.java
+```
+
+Run the Java demonstration:
+
+```powershell
+java -cp "java_engine\bin;antlr-4.13.2-complete.jar" gapi.uosql.Main
+```
+
+**Note:** The commands above use Windows PowerShell classpath separators. On Linux and macOS, replace `;` with `:` in Java classpaths.
+
 ---
 
-## 🔬 Sample Output (Python & Java)
+## Example Output
+
+The following illustrates the intended end-to-end workflow:
 
 ```text
 ========================================================================
  GAPI Universal Knowledge Graph Engine
- Narrative: Human <-> Org <-> Project <-> Workflow <-> Repo <-> Model <-> Twin
 ========================================================================
 
-[Step 1] Initializing Universal Knowledge Graph via UOSQL:
+[Step 1] Initializing Universal Knowledge Graph
+
 Executed: connected with 6 graph connections.
 
-[Step 2] Executing Traversal Query:
-[Human] Levi Reyes -> [Organization] GAPI Enterprise -> [Project] UOSQL Orchestrator 
-  -> [Workflow] Continuous Intelligence -> [Repository] Amoghhosamane/ANTLRparse -> [AIModel] Gemini-Flash
+[Step 2] Executing Traversal Query
 
-[Step 3] AI Agent Tool-Call (Simulated Gemini / Agentic Tool Dispatch):
+[Human] Levi Reyes
+    ->
+[Organization] GAPI Enterprise
+    ->
+[Project] UOSQL Orchestrator
+    ->
+[Workflow] Continuous Intelligence
+    ->
+[Repository] Amoghhosamane/ANTLRparse
+    ->
+[AIModel] Gemini-Flash
+
+[Step 3] AI Agent Tool Dispatch
+
 Agent Query Result:
+
 [
   {
     "action": "find",
@@ -213,16 +398,72 @@ Agent Query Result:
     ]
   }
 ]
+
+========================================================================
+ Execution completed
+========================================================================
 ```
+
+*Output is illustrative; actual results depend on the graph data and implementation.*
 
 ---
 
-## 📜 Roadmap & Next Steps
-- [x] Context-free grammar definition for UOSQL (`.g4` and `.lark`).
-- [x] Multi-hop graph storage and path traversal.
-- [x] LLM function calling dispatch layer for autonomous agents.
-- [ ] Persistent graph storage backing (Neo4j / DuckDB / SQLite).
-- [ ] Direct Model Context Protocol (MCP) server packaging.
-- [ ] Web-based visual graph explorer using Cytoscape or D3.
-#   G A P I - U O S Q L - E n g i n e  
- 
+## Roadmap
+
+- [x] Define UOSQL grammar using Lark and ANTLR4.
+- [x] Implement graph entity and relationship representations.
+- [x] Implement multi-hop graph traversal.
+- [x] Implement property-based entity discovery.
+- [x] Develop an LLM function-calling interface.
+- [ ] Add persistent graph storage using Neo4j, DuckDB, or SQLite.
+- [ ] Package the engine as a standalone MCP server.
+- [ ] Build a web-based graph explorer using Cytoscape.js or D3.js.
+- [ ] Add graph query optimization and indexing.
+- [ ] Add performance benchmarks for Python and Java implementations.
+- [ ] Expand integration tests across both implementations.
+
+---
+
+## Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Python Runtime | Python 3.10+, Lark |
+| Java Runtime | Java 21+, ANTLR 4.13.2 |
+| Data Models | Pydantic |
+| Graph Processing | NetworkX |
+| Testing | Pytest |
+| AI Integration | OpenAI, Anthropic, Gemini tool-calling interfaces |
+| Future Storage | Neo4j, SQLite, DuckDB |
+| Future Visualization | Cytoscape.js, D3.js |
+
+---
+
+## Project Status
+
+<em>Active Prototype</em>
+
+GAPI and UOSQL are currently in the prototype stage. The project focuses on validating the language design, graph representation, traversal model, and AI-agent integration approach.
+
+Persistent storage, standalone MCP packaging, graph visualization, and performance benchmarking are planned development areas.
+
+---
+
+## Contributing
+
+Contributions, ideas, and technical discussions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Implement and test your changes.
+4. Submit a pull request with a clear description.
+
+---
+
+## License
+
+Add your preferred open-source license before publishing the repository.
+
+---
+
+**GAPI & UOSQL — Connecting people, projects, workflows, repositories, AI models, and digital infrastructure through one queryable knowledge graph.**
